@@ -1,55 +1,11 @@
 package dk.emoun.progysis.worklist;
 
-import static org.junit.Assert.*;
-
-import java.util.function.Function;
-
-import org.junit.Test;
+import org.testng.annotations.*;
+import static org.testng.Assert.*;
 
 import dk.emoun.progysis.lattices.IncomparableLatticeException;
-import dk.emoun.progysis.progysis.detectionOfSigns.DSMFMapper;
-import dk.emoun.progysis.progysis.detectionOfSigns.SignPowerSet;
-import dk.emoun.progysis.progysis.detectionOfSigns.SignsTotalFunction;
 
 public class ConstraintSystemTest {
-	
-	SignsTotalFunction stf = new SignsTotalFunction("x");
-	
-	@Test
-	public void simpleTest() throws IncomparableLatticeException{
-		
-		ConstraintSystem<SignsTotalFunction, SignsTotalFunction> cS =
-				new ConstraintSystem<SignsTotalFunction, SignsTotalFunction>(stf, 2);
-		
-		cS.addIndependentConstraintToVariable(
-				0, 
-				new BaseConstraint<SignsTotalFunction>(stf)
-			);
-		
-		Function<SignsTotalFunction, SignsTotalFunction> x2C = 
-				(SignsTotalFunction s) -> stf.join(s, s.getTop())
-		;
-		
-		cS.addConstraintToVariableDependentOnVariable(1, 0, x2C);
-		
-		assertTrue(stf.compare(cS.getValueOf(0), stf));
-		assertTrue(stf.compare(stf, cS.getValueOf(0)));
-		
-		assertTrue(stf.compare(cS.getValueOf(1), stf));
-		assertTrue(stf.compare(stf, cS.getValueOf(1)));
-		
-		SignsTotalFunction x1New = cS.updateValueOf(0);
-		assertTrue(stf.compare(x1New, stf));
-		assertTrue(stf.compare(stf, x1New));
-		
-		assertTrue(stf.compare(cS.getValueOf(1), stf));
-		assertTrue(stf.compare(stf, cS.getValueOf(1)));
-		
-		SignsTotalFunction x2New = cS.updateValueOf(1);
-		assertTrue(stf.compare(x2New, stf.getTop()));
-		assertTrue(stf.compare(stf.getTop(), x2New));
-	}
-	
 	
 	
 }
