@@ -1,7 +1,7 @@
-package MicroC_language.analysis.monotoneFramework;
+package dk.emoun.progysis.monotoneFramework;
 
-import MicroC_language.analysis.lattices.Evaluable;
-import MicroC_language.analysis.lattices.LatticeElement;
+import dk.emoun.progysis.lattices.Evaluable;
+import dk.emoun.progysis.lattices.LatticeElement;
 
 /**
  * A type of Monotone Function which resulting state is the same type

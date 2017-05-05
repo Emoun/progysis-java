@@ -1,4 +1,4 @@
-package MicroC_language.analysis.lattices;
+package dk.emoun.progysis.lattices;
 
 /**
  * Represents a complete lattice over lattice elements V.<br>

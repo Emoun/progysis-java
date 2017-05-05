@@ -1,16 +1,15 @@
-package MicroC_language.analysis.monotoneFramework;
+package dk.emoun.progysis.monotoneFramework;
 
 import java.util.List;
 import java.util.function.Function;
 
-import MicroC_language.analysis.ProgramGraph;
-import MicroC_language.analysis.Transition;
-import MicroC_language.analysis.lattices.CompleteLattice;
-import MicroC_language.analysis.lattices.LatticeElement;
-import MicroC_language.analysis.lattices.TotalFunction;
-import MicroC_language.analysis.worklist.BaseConstraint;
-import MicroC_language.analysis.worklist.ConstraintSystem;
-import MicroC_language.elements.ElementaryBlock;
+import dk.emoun.progysis.lattices.CompleteLattice;
+import dk.emoun.progysis.lattices.LatticeElement;
+import dk.emoun.progysis.lattices.TotalFunction;
+import dk.emoun.progysis.worklist.BaseConstraint;
+import dk.emoun.progysis.worklist.ConstraintSystem;
+import dk.emoun.progysis.programGraph.ProgramGraph;
+import dk.emoun.progysis.programGraph.Transition;
 
 /**
  * Represents Monotone Frameworks which use Program Graphs and have the form:<br>
@@ -26,6 +25,9 @@ import MicroC_language.elements.ElementaryBlock;
  * 
  * An instance of a Monotone Framework gives rise to a {@link ConstraintSystem},
  * which can be constructed using the {@link #constraintSystem()} method.
+ * 
+ * @param <K>
+ * The action type the monotone functions evaluate
  * @param <L>
  * The Complete Lattice type of the Monotone Framework
  * @param <V>
@@ -35,9 +37,10 @@ import MicroC_language.elements.ElementaryBlock;
  */
 public class MonotoneFramework
 		<
+			K,
 			L extends TotalFunction<L,?,? extends CompleteLattice<V>, V>,
 			V extends LatticeElement<V>,
-			F extends StableMonotoneFunction<ElementaryBlock, L> 
+			F extends StableMonotoneFunction<K, L> 
 		> 
 {
 	
@@ -57,7 +60,7 @@ public class MonotoneFramework
 	/**
 	 * Functions as E' and q0
 	 */
-	private ProgramGraph graph; 
+	private ProgramGraph<K> graph; 
 	
 	/**
 	 * Whether the instance of defines a forward analysis
@@ -82,7 +85,7 @@ public class MonotoneFramework
 	 */
 	public MonotoneFramework(	L latticeAndExtremalValue, 
 								F monotoneFunctions, 
-								ProgramGraph graph, 
+								ProgramGraph<K> graph, 
 								boolean forwardAnalysis) 
 	{
 		this.latticeAndExtremalValue = latticeAndExtremalValue; 
@@ -99,7 +102,7 @@ public class MonotoneFramework
 	 */
 	public ConstraintSystem<L,L> constraintSystem(){
 		int q0 = graph.getInitialState();
-		ProgramGraph graphToAnalyse;
+		ProgramGraph<K> graphToAnalyse;
 		
 		if(forwardAnalysis){
 			graphToAnalyse = this.graph;
@@ -117,18 +120,18 @@ public class MonotoneFramework
 				q0, new BaseConstraint<L>(latticeAndExtremalValue));
 		
 		for(int i = 0; i<cS.getNumberOfFlowVariables(); i++){
-			List<Transition> outgoingTransitions = 
+			List<Transition<K>> outgoingTransitions = 
 					graphToAnalyse.getOutgoingTransitions(i);
 			
 			//Calculate the constraints for the states this state transitions to
 			for(int j = 0; j<outgoingTransitions.size(); j++){
-					final Transition transition = outgoingTransitions.get(j);
+					final Transition<K> transition = outgoingTransitions.get(j);
 					int qs = i,
 						qt = transition.getTo();
 					
 					Function<L, L> calculateConstraintValueGivenState = 
 							(L state) -> monotoneFunctionMapper
-										.applyFunction(transition.getBlock(), state)
+										.applyFunction(transition.getAction(), state)
 							;
 					
 					cS.addConstraintToVariableDependentOnVariable(

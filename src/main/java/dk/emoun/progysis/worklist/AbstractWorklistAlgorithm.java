@@ -1,8 +1,8 @@
-package MicroC_language.analysis.worklist;
+package dk.emoun.progysis.worklist;
 
-import MicroC_language.analysis.lattices.CompleteLattice;
-import MicroC_language.analysis.lattices.LatticeElement;
-import MicroC_language.analysis.lattices.LatticeUtilities;
+import dk.emoun.progysis.lattices.CompleteLattice;
+import dk.emoun.progysis.lattices.LatticeElement;
+import dk.emoun.progysis.lattices.LatticeUtilities;
 
 public class AbstractWorklistAlgorithm {
 

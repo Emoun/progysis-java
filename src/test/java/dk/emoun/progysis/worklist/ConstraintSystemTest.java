@@ -1,4 +1,4 @@
-package MicroC_language.analysis.worklist;
+package dk.emoun.progysis.worklist;
 
 import static org.junit.Assert.*;
 
@@ -6,10 +6,10 @@ import java.util.function.Function;
 
 import org.junit.Test;
 
-import MicroC_language.analysis.detectionOfSigns.DSMFMapper;
-import MicroC_language.analysis.detectionOfSigns.SignPowerSet;
-import MicroC_language.analysis.detectionOfSigns.SignsTotalFunction;
-import MicroC_language.analysis.lattices.IncomparableLatticeException;
+import dk.emoun.progysis.lattices.IncomparableLatticeException;
+import dk.emoun.progysis.progysis.detectionOfSigns.DSMFMapper;
+import dk.emoun.progysis.progysis.detectionOfSigns.SignPowerSet;
+import dk.emoun.progysis.progysis.detectionOfSigns.SignsTotalFunction;
 
 public class ConstraintSystemTest {
 	

@@ -1,17 +1,17 @@
-package MicroC_language.analysis.monotoneFramework;
+package dk.emoun.progysis.monotoneFramework;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import MicroC_language.analysis.ProgramGraph;
-import MicroC_language.analysis.Transition;
-import MicroC_language.analysis.detectionOfSigns.DSMFMapper;
-import MicroC_language.analysis.detectionOfSigns.SignPowerSet;
-import MicroC_language.analysis.detectionOfSigns.SignSet;
-import MicroC_language.analysis.detectionOfSigns.SignsTotalFunction;
-import MicroC_language.analysis.lattices.IncomparableLatticeException;
-import MicroC_language.analysis.worklist.ConstraintSystem;
+import dk.emoun.progysis.ProgramGraph;
+import dk.emoun.progysis.lattices.IncomparableLatticeException;
+import dk.emoun.progysis.progysis.Transition;
+import dk.emoun.progysis.progysis.detectionOfSigns.DSMFMapper;
+import dk.emoun.progysis.progysis.detectionOfSigns.SignPowerSet;
+import dk.emoun.progysis.progysis.detectionOfSigns.SignSet;
+import dk.emoun.progysis.progysis.detectionOfSigns.SignsTotalFunction;
+import dk.emoun.progysis.progysis.worklist.ConstraintSystem;
 import MicroC_language.elements.Type;
 import MicroC_language.elements.Variable;
 import MicroC_language.elements.elementaryBlocks.DeclarationBlock;

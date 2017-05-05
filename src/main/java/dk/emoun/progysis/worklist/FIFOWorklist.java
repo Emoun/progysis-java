@@ -1,4 +1,4 @@
-package MicroC_language.analysis.worklist;
+package dk.emoun.progysis.worklist;
 
 import java.util.ArrayDeque;
 import java.util.Queue;

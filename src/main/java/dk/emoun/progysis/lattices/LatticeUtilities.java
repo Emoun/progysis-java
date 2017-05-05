@@ -1,4 +1,4 @@
-package MicroC_language.analysis.lattices;
+package dk.emoun.progysis.lattices;
 
 public class LatticeUtilities {
 	

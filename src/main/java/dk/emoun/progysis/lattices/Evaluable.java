@@ -1,4 +1,4 @@
-package MicroC_language.analysis.lattices;
+package dk.emoun.progysis.lattices;
 
 /**
  * Represents objects which are/can be evaluated to a lattice element.

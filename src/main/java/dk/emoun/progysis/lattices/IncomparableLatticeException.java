@@ -1,4 +1,4 @@
-package MicroC_language.analysis.lattices;
+package dk.emoun.progysis.lattices;
 
 /**
  * Thrown to indicate that two elements of a {@link CompleteLattice Complete Lattice} are

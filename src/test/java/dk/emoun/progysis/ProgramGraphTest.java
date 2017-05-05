@@ -1,4 +1,4 @@
-package MicroC_language.analysis;
+package dk.emoun.progysis;
 
 public class ProgramGraphTest {
 	

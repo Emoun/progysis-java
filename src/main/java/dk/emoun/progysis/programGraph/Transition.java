@@ -1,12 +1,9 @@
-package MicroC_language.analysis;
-
-import MicroC_language.elements.ElementaryBlock;
-import MicroC_language.elements.LogicalEquivalence;
+package dk.emoun.progysis.programGraph;
 
 /**
  * Implements edges in a program graph.
  */
-public class Transition implements LogicalEquivalence<Transition>{
+public class Transition<T>{
 	
 //Fields
 	/**
@@ -17,7 +14,7 @@ public class Transition implements LogicalEquivalence<Transition>{
 	/**
 	 * The action of the edge.
 	 */
-	private ElementaryBlock block;
+	private T action;
 	
 //Constructors
 	
@@ -26,19 +23,19 @@ public class Transition implements LogicalEquivalence<Transition>{
 	 * and representing the given elementary block (action).
 	 * @param to
 	 * The state in the program graph the transition is pointing to.
-	 * @param block
+	 * @param action
 	 * The action of the edge.
 	 */
-	public Transition(int to, ElementaryBlock block){
+	public Transition(int to, T action){
 		if(to <0){
 			throw new IllegalArgumentException("Transition target invalid: " + to);
 		}
-		if(block == null){
+		if(action == null){
 			throw new IllegalArgumentException("Block was null");
 		}
 		
 		this.to = to;
-		this.block = block;
+		this.action = action;
 	}
 	
 //Methods
@@ -56,19 +53,17 @@ public class Transition implements LogicalEquivalence<Transition>{
 	 * @return
 	 * The action of the edge.
 	 */
-	public ElementaryBlock getBlock(){
-		return this.block;
+	public T getAction(){
+		return this.action;
 	}
 	
 	@Override
 	public boolean equals(Object o){
-		return (o instanceof Transition)? this.logicEquals((Transition) o): false;
-	}
-	
-	@Override
-	public boolean logicEquals(Transition o) {
-		return 	this.to == o.to &&
-				this.block.logicEquals(o.block);
+		if(o instanceof Transition){
+			Transition other = (Transition) o;
+			return this.to == other.to && this.action.equals(other.action);
+		}
+		return false;
 	}
 	
 

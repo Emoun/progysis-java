@@ -1,7 +1,7 @@
-package MicroC_language.analysis.worklist;
+package dk.emoun.progysis.worklist;
 
-import MicroC_language.analysis.lattices.Evaluable;
-import MicroC_language.analysis.lattices.LatticeElement;
+import dk.emoun.progysis.lattices.Evaluable;
+import dk.emoun.progysis.lattices.LatticeElement;
 
 /**
  * A constraint type that evaluates to the given value

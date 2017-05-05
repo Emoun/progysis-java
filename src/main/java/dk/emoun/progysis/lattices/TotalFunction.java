@@ -1,14 +1,11 @@
-package MicroC_language.analysis.lattices;
+package dk.emoun.progysis.lattices;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.function.Function;
 
-import MicroC_language.analysis.detectionOfSigns.SignPowerSet;
-import MicroC_language.analysis.detectionOfSigns.SignSet;
 
 /**
  * Represents a Total Function of the key elements K, Complete Lattice L, and lattice elements V.<br>

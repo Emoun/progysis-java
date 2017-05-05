@@ -1,4 +1,4 @@
-package MicroC_language.analysis.worklist;
+package dk.emoun.progysis.worklist;
 
 /**
  * Defines the interface of a worklist.<br>

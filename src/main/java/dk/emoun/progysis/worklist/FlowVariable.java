@@ -1,11 +1,11 @@
-package MicroC_language.analysis.worklist;
+package dk.emoun.progysis.worklist;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import MicroC_language.analysis.lattices.CompleteLattice;
-import MicroC_language.analysis.lattices.Evaluable;
-import MicroC_language.analysis.lattices.LatticeElement;
+import dk.emoun.progysis.lattices.CompleteLattice;
+import dk.emoun.progysis.lattices.Evaluable;
+import dk.emoun.progysis.lattices.LatticeElement;
 
 
 /**

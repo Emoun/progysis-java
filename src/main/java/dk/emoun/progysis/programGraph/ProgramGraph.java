@@ -1,4 +1,4 @@
-package MicroC_language.analysis;
+package dk.emoun.progysis.programGraph;
 
 import java.lang.Integer;
 import java.util.ArrayList;
@@ -14,11 +14,11 @@ import java.util.List;
  * The graph held at any point by an instance of the class is not necessarily a valid Program Graph.
  * Therefore, {@link #valid()} is provided to test whether the graph is valid.
  */
-public class ProgramGraph {
+public class ProgramGraph<T>{
 
 // Fields
 
-    private List<List<Transition>> graph;
+    private List<List<Transition<T>>> graph;
     private int initialState, finalState;
 
 // Constructors
@@ -32,7 +32,7 @@ public class ProgramGraph {
      * @param graph
      * @param finalStates a list of final states
      */
-    public ProgramGraph(List<List<Transition>> graph, int initialState, int finalState) {
+    public ProgramGraph(List<List<Transition<T>>> graph, int initialState, int finalState) {
         validateGraph(graph, initialState, finalState);
         this.graph = graph;
         this.initialState = initialState;
@@ -44,7 +44,7 @@ public class ProgramGraph {
      * The graph has no states or transitions after initialization.
      */
     public ProgramGraph() {
-        this(new ArrayList<List<Transition>>(), -1, -1);
+        this(new ArrayList<List<Transition<T>>>(), -1, -1);
     }
 
 
@@ -58,7 +58,7 @@ public class ProgramGraph {
      * @return
      */
     public int newState() {
-        return newState(new ArrayList<Transition>());
+        return newState(new ArrayList<Transition<T>>());
     }
 
     /**
@@ -69,7 +69,7 @@ public class ProgramGraph {
      * @param transitions outgoing transitions of the new state
      * @return the number of the new state in the graph
      */
-    public int newState(List<Transition> transitions) {
+    public int newState(List<Transition<T>> transitions) {
         int stateNr = graph.size();
         graph.add(transitions);
         return stateNr;
@@ -133,23 +133,23 @@ public class ProgramGraph {
      * G.initialState == G.reverse().finalState
      * G.finalState == G.reverse().initialState
      */
-    public ProgramGraph reverse(){
+    public ProgramGraph<T> reverse(){
     	
     	
     	//Initialize transition list
-    	List<List<Transition>> reversedTransitions = new ArrayList<List<Transition>>();
+    	List<List<Transition<T>>> reversedTransitions = new ArrayList<List<Transition<T>>>();
     	for(int i = 0; i<this.graph.size(); i++){
-    		reversedTransitions.add(new ArrayList<Transition>());
+    		reversedTransitions.add(new ArrayList<Transition<T>>());
     	}
     	
     	//reverse all transitions
     	for(int i = 0; i<this.graph.size(); i++){
-    		for(Transition t: graph.get(i)){
-    			reversedTransitions.get(t.getTo()).add(new Transition(i, t.getBlock()));
+    		for(Transition<T> t: graph.get(i)){
+    			reversedTransitions.get(t.getTo()).add(new Transition<T>(i, t.getAction()));
     		}
     	}
     	
-    	return new ProgramGraph(reversedTransitions, this.finalState, this.initialState);
+    	return new ProgramGraph<T>(reversedTransitions, this.finalState, this.initialState);
     }
 // Methods for graph analysis
 
@@ -187,7 +187,7 @@ public class ProgramGraph {
      * @param state
      * @return
      */
-    public List<Transition> getOutgoingTransitions(int state) {
+    public List<Transition<T>> getOutgoingTransitions(int state) {
         validateStateNumber(state);
         return Collections.unmodifiableList(this.graph.get(state));
     }
@@ -195,16 +195,16 @@ public class ProgramGraph {
     @Override
     public boolean equals(Object o){
     	if(o instanceof ProgramGraph){
-    		ProgramGraph other = (ProgramGraph) o;
+    		ProgramGraph<T> other = (ProgramGraph) o;
     		try{
     			//Test that the graph is equal
 	    		for(int qs = 0; qs<this.graph.size(); qs++){
-	    			for(Transition t: this.graph.get(qs)){
+	    			for(Transition<T> t: this.graph.get(qs)){
 	    				if(!other.graph.get(qs).contains(t)){
 	    					return false;
 	    				}
 	    			}
-	    			for(Transition t: other.graph.get(qs)){
+	    			for(Transition<T> t: other.graph.get(qs)){
 	    				if(!this.graph.get(qs).contains(t)){
 	    					return false;
 	    				}
@@ -238,7 +238,7 @@ public class ProgramGraph {
      *
      * @param graph
      */
-    public static void validateGraph(List<List<Transition>> graph, int initialState, int finalState) {
+    public static <T>void validateGraph(List<List<Transition<T>>> graph, int initialState, int finalState) {
         if (graph == null) {
             throw new IllegalArgumentException("Graph was null");
         }
@@ -248,7 +248,7 @@ public class ProgramGraph {
 
         for (int i = 0; i < graph.size(); i++) {
             to = new ArrayList<Integer>();
-            List<Transition> transitions = graph.get(i);
+            List<Transition<T>> transitions = graph.get(i);
             if(transitions == null){
             	throw new IllegalArgumentException("Transition list for state " + i + "is null");
             }

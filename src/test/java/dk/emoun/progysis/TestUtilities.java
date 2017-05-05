@@ -1,9 +1,11 @@
-package MicroC_language.analysis;
+package dk.emoun.progysis;
 
-import MicroC_language.analysis.lattices.CompleteLattice;
-import MicroC_language.analysis.lattices.IncomparableLatticeException;
-import MicroC_language.analysis.lattices.LatticeElement;
-import MicroC_language.analysis.worklist.ConstraintSystem;
+import dk.emoun.progysis.ProgramGraph;
+import dk.emoun.progysis.Transition;
+import dk.emoun.progysis.lattices.CompleteLattice;
+import dk.emoun.progysis.lattices.IncomparableLatticeException;
+import dk.emoun.progysis.lattices.LatticeElement;
+import dk.emoun.progysis.progysis.worklist.ConstraintSystem;
 import MicroC_language.elements.ArrayVariableExpr;
 import MicroC_language.elements.BinaryExpr;
 import MicroC_language.elements.BinaryOperator;

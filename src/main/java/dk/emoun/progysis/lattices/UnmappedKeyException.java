@@ -1,4 +1,4 @@
-package MicroC_language.analysis.lattices;
+package dk.emoun.progysis.lattices;
 
 /**
  * Thrown to indicate that a {@link TotalFunction Total Function} instance does not map 
