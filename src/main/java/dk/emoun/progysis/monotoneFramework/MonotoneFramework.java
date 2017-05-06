@@ -41,8 +41,7 @@ public class MonotoneFramework
 		<
 			K,
 			L extends TotalFunction<L,?,? extends CompleteLattice<V>, V>,
-			V extends LatticeElement<V>,
-			F extends MonotoneFunction<K, L> 
+			V extends LatticeElement<V> 
 		> 
 {
 	
@@ -57,7 +56,7 @@ public class MonotoneFramework
 	 * This single Monotone Function functions as a mapping f
 	 * to the formal Monotone Functions F'.
 	 */
-	private F monotoneFunctionMapper; 
+	private MonotoneFunctionMapper<K, L> monotoneFunctionMapper; 
 	
 	/**
 	 * Functions as E'
@@ -79,10 +78,6 @@ public class MonotoneFramework
 	 * @param latticeAndExtremalValue
 	 * The Complete Lattice of the framework. 
 	 * Its value is also assumed to be the extremal value of the framework.
-	 * @param monotoneFunctions
-	 * The monotone functions of the framework. It is assumed that
-	 * if the framework formally is defined by multiple monotone functions,
-	 * this function must contain them, implementing a way to choose between the formal functions.
 	 * @param programGraph
 	 * The program graph to run an analysis on. 
 	 * All vertices in the graph must have a zero or positive unique value.
@@ -91,15 +86,21 @@ public class MonotoneFramework
 	 * @param forwardAnalysis
 	 * Whether the framework implements a forward analysis (then should be {@code true}) 
 	 * or backwards analysis (should be {@code false}).
+	 * @param monotoneFunctions
+	 * The monotone functions of the framework. If more than one function is applicable 
+	 * for a given action, it is undefined which of them is used by the constraint system.
+	 * If no function is application, or no function is given, an exception is thrown by 
+	 * the {@link #constraintSystem()} method.
+	 * 
 	 */
-	public MonotoneFramework(	L latticeAndExtremalValue, 
-								F monotoneFunctions, 
+	public MonotoneFramework(	L latticeAndExtremalValue,  
 								SimpleDirectedGraph<Integer,K> programGraph,
 								int q0,
-								boolean forwardAnalysis) 
+								boolean forwardAnalysis,
+								MonotoneFunction<K, L>... monotoneFunctions) 
 	{
 		this.latticeAndExtremalValue = latticeAndExtremalValue; 
-		this.monotoneFunctionMapper = monotoneFunctions;
+		this.monotoneFunctionMapper = new MonotoneFunctionMapper<K, L>(monotoneFunctions);
 		this.programGraph = programGraph;
 		this.q0 = q0;
 		this.forwardAnalysis = forwardAnalysis;
@@ -138,10 +139,14 @@ public class MonotoneFramework
 					int qs = i,
 						qt = graphToAnalyse.getEdgeTarget(action);
 					
+					final MonotoneFunction<K, L> f = monotoneFunctionMapper.getApplicableFunction(action);
+					
+					if(f == null){
+						throw new IllegalStateException("No applicable function for action");
+					}
+					
 					Function<L, L> calculateConstraintValueGivenState = 
-							(L state) -> monotoneFunctionMapper
-										.apply(action, state)
-							;
+							(L state) -> f.apply(action, state);
 					
 					cS.addConstraintToVariableDependentOnVariable(
 							qt, 
