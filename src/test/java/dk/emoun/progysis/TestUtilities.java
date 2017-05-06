@@ -1,12 +1,11 @@
 package dk.emoun.progysis;
 
-import dk.emoun.progysis.programGraph.ProgramGraph;
-import dk.emoun.progysis.programGraph.Transition;
 import dk.emoun.progysis.lattices.CompleteLattice;
 import dk.emoun.progysis.lattices.IncomparableLatticeException;
 import dk.emoun.progysis.lattices.LatticeElement;
 import dk.emoun.progysis.worklist.ConstraintSystem;
 
+import org.jgrapht.DirectedGraph;
 import org.testng.annotations.*;
 import static org.testng.Assert.*;
 
@@ -15,8 +14,8 @@ import java.util.List;
 
 public class TestUtilities {
 	
-	public static <T>void addTransition(ProgramGraph<T> pg, int from, int to, T action) {
-		pg.addOutgoingTransition(from, new Transition<T>(to, action));
+	public static <T>void addTransition(DirectedGraph<Integer, T> pg, int from, int to, T action) {
+		pg.addEdge(from, to);
 	}
 	
 	public static <L extends CompleteLattice<V>, V extends LatticeElement<V>>void 

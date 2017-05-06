@@ -2,14 +2,20 @@
 apply plugin: 'eclipse'
 apply plugin: 'java'
 
-
+eclipse {
+    classpath {
+       downloadSources=true
+    }
+}
 repositories {
     mavenCentral()
 }
 
 dependencies{
+	compile			(group: 'org.jgrapht',			name: 'jgrapht-core',		version: '1.0.1' )
+	
 	testCompile		(group: 'org.testng', 			name: 'testng', 		version: '6.10'	)
-	testCompile 	(group: 'org.mockito',			name: 'mockito-core',	version: '2.7.+')
+	testCompile 	(group: 'org.mockito',			name: 'mockito-core',	version: '2.7.22')
 }
 
 test{

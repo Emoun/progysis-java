@@ -1,6 +1,6 @@
 package dk.emoun.progysis.monotoneFramework;
 
-import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 import dk.emoun.progysis.lattices.CompleteLattice;
@@ -8,8 +8,10 @@ import dk.emoun.progysis.lattices.LatticeElement;
 import dk.emoun.progysis.lattices.TotalFunction;
 import dk.emoun.progysis.worklist.BaseConstraint;
 import dk.emoun.progysis.worklist.ConstraintSystem;
-import dk.emoun.progysis.programGraph.ProgramGraph;
-import dk.emoun.progysis.programGraph.Transition;
+
+import org.jgrapht.DirectedGraph;
+import org.jgrapht.graph.EdgeReversedGraph;
+import org.jgrapht.graph.SimpleDirectedGraph;
 
 /**
  * Represents Monotone Frameworks which use Program Graphs and have the form:<br>
@@ -58,9 +60,14 @@ public class MonotoneFramework
 	private F monotoneFunctionMapper; 
 	
 	/**
-	 * Functions as E' and q0
+	 * Functions as E'
 	 */
-	private ProgramGraph<K> graph; 
+	private SimpleDirectedGraph<Integer, K> programGraph; 
+	
+	/**
+	 * The formal q0 in the Monotone Framework
+	 */
+	private int q0;
 	
 	/**
 	 * Whether the instance of defines a forward analysis
@@ -76,21 +83,25 @@ public class MonotoneFramework
 	 * The monotone functions of the framework. It is assumed that
 	 * if the framework formally is defined by multiple monotone functions,
 	 * this function must contain them, implementing a way to choose between the formal functions.
-	 * @param graph
+	 * @param programGraph
 	 * The program graph to run an analysis on. 
-	 * Its initial state is assumed to be the formal q0 in the constructed Monotone Framework.
+	 * All vertices in the graph must have a zero or positive unique value.
+	 * @param q0
+	 * The initial state of the program graph, the formal q0 in the constructed Monotone Framework.
 	 * @param forwardAnalysis
 	 * Whether the framework implements a forward analysis (then should be {@code true}) 
 	 * or backwards analysis (should be {@code false}).
 	 */
 	public MonotoneFramework(	L latticeAndExtremalValue, 
 								F monotoneFunctions, 
-								ProgramGraph<K> graph, 
+								SimpleDirectedGraph<Integer,K> programGraph,
+								int q0,
 								boolean forwardAnalysis) 
 	{
 		this.latticeAndExtremalValue = latticeAndExtremalValue; 
 		this.monotoneFunctionMapper = monotoneFunctions;
-		this.graph = graph;
+		this.programGraph = programGraph;
+		this.q0 = q0;
 		this.forwardAnalysis = forwardAnalysis;
 	}
 	
@@ -101,18 +112,17 @@ public class MonotoneFramework
 	 * @return
 	 */
 	public ConstraintSystem<L,L> constraintSystem(){
-		int q0 = graph.getInitialState();
-		ProgramGraph<K> graphToAnalyse;
+		DirectedGraph<Integer,K> graphToAnalyse;
 		
 		if(forwardAnalysis){
-			graphToAnalyse = this.graph;
+			graphToAnalyse = this.programGraph;
 		}else{
-			graphToAnalyse = this.graph.reverse();
+			graphToAnalyse = new EdgeReversedGraph<Integer, K>(this.programGraph);
 		}
 		
 		ConstraintSystem<L,L> cS = new ConstraintSystem<L,L>(	
 										latticeAndExtremalValue, 
-										graphToAnalyse.getNumberOfStates()
+										graphToAnalyse.vertexSet().size()
 										);
 		
 		//assign the initial state the extremal value
@@ -120,18 +130,17 @@ public class MonotoneFramework
 				q0, new BaseConstraint<L>(latticeAndExtremalValue));
 		
 		for(int i = 0; i<cS.getNumberOfFlowVariables(); i++){
-			List<Transition<K>> outgoingTransitions = 
-					graphToAnalyse.getOutgoingTransitions(i);
+			Set<K> outgoingTransitions = 
+					graphToAnalyse.outgoingEdgesOf(i);
 			
 			//Calculate the constraints for the states this state transitions to
-			for(int j = 0; j<outgoingTransitions.size(); j++){
-					final Transition<K> transition = outgoingTransitions.get(j);
+			for(K action :outgoingTransitions){
 					int qs = i,
-						qt = transition.getTo();
+						qt = graphToAnalyse.getEdgeTarget(action);
 					
 					Function<L, L> calculateConstraintValueGivenState = 
 							(L state) -> monotoneFunctionMapper
-										.applyFunction(transition.getAction(), state)
+										.applyFunction(action, state)
 							;
 					
 					cS.addConstraintToVariableDependentOnVariable(
