@@ -8,16 +8,9 @@ import dk.emoun.progysis.lattices.LatticeElement;
  * @param <K>
  * The action type the function evaluates
  * @param <T>
- * The state type the function evaluates
- * @param <R>
- * The type of the state which is the result of the function application
+ * The state type the function evaluates.
  */
-public interface MonotoneFunction
-	<
-		K,
-		T extends LatticeElement<T>,
-		R extends LatticeElement<?>
-	> 
+public interface MonotoneFunction<K,T extends LatticeElement<T>> 
 {
 	
 	/**
@@ -38,5 +31,5 @@ public interface MonotoneFunction
 	 * @return
 	 * The new state
 	 */
-	public R apply(K action, Evaluable<T> state);
+	public T applyFunction(K statement, Evaluable<T> state);
 }
