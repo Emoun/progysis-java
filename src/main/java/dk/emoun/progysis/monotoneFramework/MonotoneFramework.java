@@ -42,7 +42,7 @@ public class MonotoneFramework
 			K,
 			L extends TotalFunction<L,?,? extends CompleteLattice<V>, V>,
 			V extends LatticeElement<V>,
-			F extends StableMonotoneFunction<K, L> 
+			F extends MonotoneFunction<K, L> 
 		> 
 {
 	
