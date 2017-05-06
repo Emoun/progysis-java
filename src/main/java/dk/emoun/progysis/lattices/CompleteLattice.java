@@ -24,21 +24,6 @@ public interface CompleteLattice<V extends LatticeElement<V>> {
 //methods
 	
 	/**
-	 * @return 
-	 * the top element (the greatest element) of the complete lattice.<br>
-	 */
-	public abstract V getTop();
-	
-	/**
-	 * Returns whether the given element is the top element of the lattice.
-	 * @param e
-	 * Element of the lattice
-	 * @return
-	 * Whether the given element is the top element
-	 */
-	public boolean isTop(Evaluable<V> e);
-	
-	/**
 	 * 
 	 * @return
 	 * the bottom element (the least element) of the complete lattice.<br>

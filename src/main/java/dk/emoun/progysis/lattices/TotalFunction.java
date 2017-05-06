@@ -169,18 +169,7 @@ public abstract class TotalFunction
 	}
 	
 //Overriding methods
-	@Override
-	public R getTop() {
-		return copyThisToFunctionWhereAllKeysMapTo(lattice.getTop());
-	}
-
-	@Override
-	public boolean isTop(Evaluable<R> r) {
-		return allValuesMapTo(r, lattice.getTop());
-	}
-	
-	
-	
+		
 	@Override
 	public R getBottom() {
 		return copyThisToFunctionWhereAllKeysMapTo(lattice.getBottom());
@@ -199,19 +188,18 @@ public abstract class TotalFunction
 		
 		validateMapSameKeys(e1TF, e2TF);
 		
-		if(isBottom(e1) || isTop(e2)){
+		if(isBottom(e1))
+		{
 			return true;
 		}
 		
-		if(
-			isTop(e1) ||  	//and e2 is not top
-			isBottom(e2)	//and e1 is not bottom
-		)
+		if(isBottom(e2))
 		{
+			//e1 is not bot
 			return false;
 		}
 		
-		//At this point neither is top or bottom and they map the same keys
+		//At this point neither is bottom and they map the same keys
 		for(K key: e1TF.mapping.keySet()){
 			if(!lattice.compare(
 					e1TF.getValue(key), 
