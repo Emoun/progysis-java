@@ -140,7 +140,7 @@ public class MonotoneFramework
 					
 					Function<L, L> calculateConstraintValueGivenState = 
 							(L state) -> monotoneFunctionMapper
-										.applyFunction(action, state)
+										.apply(action, state)
 							;
 					
 					cS.addConstraintToVariableDependentOnVariable(
