@@ -53,7 +53,7 @@ public interface CompleteLattice<V extends LatticeElement<V>> {
 	 * @throws IncomparableLatticeException
 	 * If e1 and e2 are incomparable in the lattice.
 	 */
-	public abstract boolean compare(Evaluable<V> e1, Evaluable<V> e2) throws IncomparableLatticeException;
+	public abstract boolean compare(Evaluable<V> e1, Evaluable<V> e2);
 		
 	/**
 	 * Joins the two lattice elements returning the most precise (least fixed point) element

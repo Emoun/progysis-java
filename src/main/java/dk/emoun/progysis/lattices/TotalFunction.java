@@ -181,12 +181,16 @@ public abstract class TotalFunction
 	}
 
 	@Override
-	public boolean compare(Evaluable<R> e1, Evaluable<R> e2) throws IncomparableLatticeException {
+	public boolean compare(Evaluable<R> e1, Evaluable<R> e2){
 		
 		TotalFunction<R,K,L,V> e1TF = (TotalFunction) (e1.value());
 		TotalFunction<R,K,L,V> e2TF = (TotalFunction) (e2.value());
 		
-		validateMapSameKeys(e1TF, e2TF);
+		if( !mapsKeysOf(e1TF, e2TF) || 
+			!mapsKeysOf(e2TF, e1TF))
+		{
+			return false;
+		}
 		
 		if(isBottom(e1))
 		{
@@ -287,24 +291,7 @@ public abstract class TotalFunction
 		allKeys.addAll(e2T.mapping.keySet());
 		return allKeys;
 	}
-	
-	/**
-	 * Validates that the given Total Functions map the exact same keys.<br>
-	 * If this is not the case an {@link IncomparableLatticeException} is thrown.
-	 * @param e1T
-	 * @param e2T
-	 * @throws IncomparableLatticeException
-	 */
-	private void validateMapSameKeys(TotalFunction<R, K, L, V> e1T, TotalFunction<R, K, L, V> e2T)
-			throws IncomparableLatticeException 
-	{
-		if( !mapsKeysOf(e1T, e2T) || 
-			!mapsKeysOf(e2T, e1T))
-		{
-			throw new IncomparableLatticeException((R) e1T, (R) e2T, this);
-		}
-	}
-	
+		
 	/**
 	 * Returns whether the first Total Function maps
 	 * all of the second Total Function's keys.
