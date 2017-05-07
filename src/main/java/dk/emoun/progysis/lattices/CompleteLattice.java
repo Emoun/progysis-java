@@ -50,8 +50,6 @@ public interface CompleteLattice<V extends LatticeElement<V>> {
 	 * Element of the lattice
 	 * @return
 	 * Whether e1 <= e2 (e1 is more precise than e2)
-	 * @throws IncomparableLatticeException
-	 * If e1 and e2 are incomparable in the lattice.
 	 */
 	public abstract boolean compare(Evaluable<V> e1, Evaluable<V> e2);
 		
