@@ -19,35 +19,31 @@ public class LatticeUtilities {
 		> 
 	boolean equal(Evaluable<V> element1, Evaluable<V> element2, L lattice) 
 	{
-		try {
-			return	equalProtected(element1, element2, lattice);
-		} catch (IncomparableLatticeException e) {
-			return false;
-		}
+		return 	lattice.compare(element1, element2) &&
+				lattice.compare(element2, element1);
 	}
 	
 	/**
-	 * Returns whether the two lattice elements are equal in the Complete Lattice.
+	 * Returns whether the two lattice elements are unordered in the Complete Lattice,
+	 * i.e. (element1 <= element2) == {@code false} and (element2 <= element1) == {@code false}.
 	 * @param element1
 	 * @param element2
 	 * @param lattice
 	 * Complete Lattice over the given elements
 	 * @return
-	 * {@code true}if the two elements are equal in the lattice, otherwise {@code false}.
-	 * @throws IncomparableLatticeException
+	 * {@code true}if the two elements are unordered in the lattice, otherwise {@code false}.
 	 */
 	public static 
 		<
 		L extends CompleteLattice<V>,
 		V extends LatticeElement<V>
 		> 
-	boolean equalProtected(Evaluable<V> element1, Evaluable<V> element2, L lattice) 
-			throws IncomparableLatticeException
+	boolean unordered(Evaluable<V> element1, Evaluable<V> element2, L lattice) 
 	{
-		return 	lattice.compare(element1, element2) &&
-				lattice.compare(element2, element1);
+		return 	!lattice.compare(element1, element2) &&
+				!lattice.compare(element2, element1);
 	}
-		
+			
 	/**
 	 * Returns whether the given element is equal to the bottom element in the given lattice.<br>
 	 * Note: The bottom element is defined as {@link CompleteLattice#getTop()}. This can be inconsistent
@@ -77,11 +73,9 @@ public class LatticeUtilities {
 	 * @param r2
 	 * @return
 	 * {@code true}if the two functions are equal, otherwise {@code false}.
-	 * @throws IncomparableLatticeException
 	 */
 	public static  <R extends TotalFunction<R,?,?,?>>
 	boolean equal(R r1,R r2) 
-			throws IncomparableLatticeException
 	{
 		return 	equal(r1, r2,r1);
 	}
