@@ -6,22 +6,29 @@ import dk.emoun.progysis.lattices.LatticeElement;
 /**
  * An interface representing monotone function functionality
  * @param <K>
- * The statement type the function evaluates
+ * The action type the function evaluates.
  * @param <T>
  * The state type the function evaluates.
  */
 public interface MonotoneFunction<K,T extends LatticeElement<T>> 
 {
+	
+	/**
+	 * @param action
+	 * @return
+	 * Whether the function is applicable for the given action.
+	 */
+	public boolean applicableFor(K action);
+	
 	/**
 	 * Evaluates the monotone function with 
-	 * the given statement and state returning the result.
-	 * If the result is an equal to the given state, 
-	 * the same state instance must be returned, 
-	 * otherwise a new state instance is returned.
-	 * @param statement
+	 * the given action and state returning the result.
+	 * Even if the result is equivalent to the given state it may be a different instance.
+	 * The function assumes that {@link #applicableFor(action)} == true.
+	 * @param action
 	 * @param state
 	 * @return
 	 * The new state
 	 */
-	public T applyFunction(K statement, Evaluable<T> state);
+	public T apply(K action, Evaluable<T> state);
 }
