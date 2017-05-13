@@ -7,11 +7,11 @@ package dk.emoun.progysis.lattices;
  * @param <V>
  * The type of the implementing lattice element
  */
-public interface LatticeElement
+public abstract class LatticeElement
 		<
 		V extends LatticeElement<V>
 		> 
-		extends Evaluable<V>
+		implements Evaluable<V>, CompleteLattice<V>
 {
-
+	
 }
