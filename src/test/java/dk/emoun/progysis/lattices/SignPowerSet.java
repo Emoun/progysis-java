@@ -12,9 +12,9 @@ public class SignPowerSet extends LatticeElement<SignPowerSet> {
 	private Set<Sign> signSet;
 	
 //Constructors
-//	public SignPowerSet(){
-//		this.signSet = Collections.emptySet();
-//	}
+	public SignPowerSet(){
+		this.signSet = Collections.emptySet();
+	}
 	
 	public SignPowerSet(Sign...signs){
 		Set<Sign> temp = new HashSet<Sign>();
@@ -36,33 +36,33 @@ public class SignPowerSet extends LatticeElement<SignPowerSet> {
 	}
 	
 	@Override
-	public boolean isBottom(Evaluable<SignPowerSet> element) {
-		return element.value().getSignSet().size() == 0;
+	public boolean isBottom() {
+		return getSignSet().size() == 0;
 	}
 	
 	@Override
-	public boolean compare(Evaluable<SignPowerSet> e1, Evaluable<SignPowerSet> e2) {
-		if(isBottom(e1)){
+	public boolean compare(Evaluable<SignPowerSet> other) {
+		if(this.isBottom()){
 			//intrinsically holds
 			return true;
 		}
 		
-		Set<Sign> v1 = e1.value().getSignSet();
-		Set<Sign> v2 = e2.value().getSignSet();
+		Set<Sign> v1 = getSignSet();
+		Set<Sign> v2 = other.value().getSignSet();
 		return v2.containsAll(v1);
 	}
 
 	@Override
-	public SignPowerSet join(Evaluable<SignPowerSet> e1, Evaluable<SignPowerSet> e2) {
+	public SignPowerSet join(Evaluable<SignPowerSet> other) {
 		Set<Sign> result = new HashSet<Sign>();
-		result.addAll(e1.value().getSignSet());
-		result.addAll(e2.value().getSignSet());
+		result.addAll(getSignSet());
+		result.addAll(other.value().getSignSet());
 		return new SignPowerSet(result);
 	}
 	
 	@Override
-	public String stringRepresentation(Evaluable<SignPowerSet> e) {
-		Set<Sign> v = e.value().getSignSet();
+	public String stringRepresentation() {
+		Set<Sign> v = getSignSet();
 		StringBuilder b = new StringBuilder();
 		
 		b.append('{');
