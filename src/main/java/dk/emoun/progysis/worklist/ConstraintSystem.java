@@ -37,29 +37,22 @@ import dk.emoun.progysis.lattices.LatticeElement;
  * The method {@link #getValueOf} returns the currently mapped (I.E. last updated value) of the given flow variable.
  * This method does not recalculate the variable, so it may return an outdated value. This is by design.
  * 
- * @param <L>
- * The Complete Lattice the flow variable values are elements of.
  * @param <V>
  * The lattice elements the flow variables evaluate to.
  */
-public class ConstraintSystem<L extends CompleteLattice<V>, V extends LatticeElement<V>> {
+public class ConstraintSystem<V extends LatticeElement<V>> {
 	
 //Fields
 	
 	/**
 	 * The flow variables (equations/constraints) of the constraint system
 	 */
-	private FlowVariable<L,V>[] flowVariables;
+	private FlowVariable<V>[] flowVariables;
 	
 	/**
 	 * The last updated values of the flow variables.
 	 */
 	private List<V> flowVariableCurrentValues;
-	
-	/**
-	 * An instance of the lattice the flow variables evaluate to an element of.
-	 */
-	private L lattice;
 	
 //Constraints
 	
@@ -68,28 +61,20 @@ public class ConstraintSystem<L extends CompleteLattice<V>, V extends LatticeEle
 	 * who evaluate to elements of the given lattice.<br>
 	 * When the constructor returns all flow variables have no constraints, meaning they evaluate to the 
 	 * bottom element, and they are all updated to that element.
-	 * @param lattice
+	 * @param initValue
+	 * Initial value of the flow variables.
 	 * @param numberOfFlowVariables
 	 */
-	public ConstraintSystem(L lattice, int numberOfFlowVariables){
-		this.lattice = lattice;
+	public ConstraintSystem(int numberOfFlowVariables, V initValue){
 		this.flowVariables = new FlowVariable[numberOfFlowVariables];
 		this.flowVariableCurrentValues = new ArrayList<V>();
 		
 		for(int i = 0; i<this.flowVariables.length; i++){
-			this.flowVariables[i] = new FlowVariable<L, V>(this.lattice);
-			this.flowVariableCurrentValues.add(this.lattice.getBottom());
+			this.flowVariables[i] = new FlowVariable<V>();
+			this.flowVariableCurrentValues.add(initValue);
 		}
 	}
 //Methods
-	
-	/**
-	 * @return
-	 * An instance of the lattice the flow variables evaluate to an element of.
-	 */
-	public L getLattice(){
-		return this.lattice;
-	}
 	
 	/**
 	 * Add a new constraint to a variable, which is dependent on another variable.
@@ -107,7 +92,7 @@ public class ConstraintSystem<L extends CompleteLattice<V>, V extends LatticeEle
 		}
 		validateFlowVariable(variableToAddTo);
 		
-		FlowVariableConstraint<L, V> dependentConstraint = new FlowVariableConstraint<L,V>(this, dependencyVariable, constraintCalculator);
+		FlowVariableConstraint<V> dependentConstraint = new FlowVariableConstraint<V>(this, dependencyVariable, constraintCalculator);
 		this.flowVariables[variableToAddTo].addConstaint(dependentConstraint);
 	}
 	
@@ -143,7 +128,7 @@ public class ConstraintSystem<L extends CompleteLattice<V>, V extends LatticeEle
 	 */
 	public V updateValueOf(int flowVariable){
 		validateFlowVariable(flowVariable);
-		FlowVariable<L ,V> fV = this.flowVariables[flowVariable];
+		FlowVariable<V> fV = this.flowVariables[flowVariable];
 		this.flowVariableCurrentValues.set(flowVariable, fV.value());
 		return getValueOf(flowVariable);
 	}
@@ -178,7 +163,7 @@ public class ConstraintSystem<L extends CompleteLattice<V>, V extends LatticeEle
 		StringBuilder b = new StringBuilder();
 		
 		for(int i = 0; i<getNumberOfFlowVariables(); i++){
-			b.append("A(" + i + ") >= " + lattice.stringRepresentation(getValueOf(i)) + "\n");
+			b.append("A(" + i + ") >= " + getValueOf(i).stringRepresentation() + "\n");
 		}
 		
 		String result = b.toString();

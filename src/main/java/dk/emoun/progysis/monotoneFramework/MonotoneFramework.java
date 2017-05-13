@@ -30,8 +30,6 @@ import org.jgrapht.graph.SimpleDirectedGraph;
  * 
  * @param <K>
  * The action type the monotone functions evaluate
- * @param <L>
- * The Complete Lattice type of the Monotone Framework
  * @param <V>
  * The Complete Lattice element type.
  * @param <F>
@@ -40,7 +38,7 @@ import org.jgrapht.graph.SimpleDirectedGraph;
 public class MonotoneFramework
 		<
 			K,
-			L extends TotalFunction<L,?,? extends CompleteLattice<V>, V>,
+			L extends TotalFunction<L,?, V>,
 			V extends LatticeElement<V> 
 		> 
 {
@@ -112,7 +110,7 @@ public class MonotoneFramework
 	 * Constructs the Constrain System that the instance gives rise to.
 	 * @return
 	 */
-	public ConstraintSystem<L,L> constraintSystem(){
+	public ConstraintSystem<L> constraintSystem(){
 		DirectedGraph<Integer,K> graphToAnalyse;
 		
 		if(forwardAnalysis){
@@ -121,9 +119,9 @@ public class MonotoneFramework
 			graphToAnalyse = new EdgeReversedGraph<Integer, K>(this.programGraph);
 		}
 		
-		ConstraintSystem<L,L> cS = new ConstraintSystem<L,L>(	
-										latticeAndExtremalValue, 
-										graphToAnalyse.vertexSet().size()
+		ConstraintSystem<L> cS = new ConstraintSystem<L>(	
+										graphToAnalyse.vertexSet().size(),
+										latticeAndExtremalValue.getBottom()
 										);
 		
 		//assign the initial state the extremal value

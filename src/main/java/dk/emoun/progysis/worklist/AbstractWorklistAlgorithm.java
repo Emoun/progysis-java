@@ -1,6 +1,5 @@
 package dk.emoun.progysis.worklist;
 
-import dk.emoun.progysis.lattices.CompleteLattice;
 import dk.emoun.progysis.lattices.LatticeElement;
 import dk.emoun.progysis.lattices.LatticeUtilities;
 
@@ -17,11 +16,9 @@ public class AbstractWorklistAlgorithm {
 	 * The constraint system to solve.
 	 */
 	public 	static <
-			L extends CompleteLattice<V>, 
 			V extends LatticeElement<V>
 			>
-	void solveConstraintSystem(Worklist w, ConstraintSystem<L,V> cS){
-		L lattice = cS.getLattice();
+	void solveConstraintSystem(Worklist w, ConstraintSystem<V> cS){
 		int numberOfFlowVariables = cS.getNumberOfFlowVariables();
 		
 		for(int i = 0; i<numberOfFlowVariables; i++){
@@ -36,7 +33,7 @@ public class AbstractWorklistAlgorithm {
 			oldValue = cS.getValueOf(fV);
 			newValue = cS.updateValueOf(fV);
 			
-			if(!LatticeUtilities.equal(oldValue, newValue, lattice)){
+			if(!LatticeUtilities.equal(oldValue, newValue)){
 				for(int i: cS.getVariablesInfluencedBy(fV)){
 					w.insert(i);
 				}
