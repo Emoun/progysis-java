@@ -1,24 +1,21 @@
 package dk.emoun.progysis.worklist;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
-import dk.emoun.progysis.lattices.CompleteLattice;
 import dk.emoun.progysis.lattices.Evaluable;
 import dk.emoun.progysis.lattices.LatticeElement;
 
 
 /**
  * Defines a constraint that is dependent on other constraint's values to calculate its own value.
- * @param <L>
- * The Complete Lattice type of the values each instance of CompoundConstraint is dependent upon.
  * @param <V>
  * The type of the lattice elements comprising this CompoundConstraint
  */
 public class CompoundConstraint
 			<
-			L extends CompleteLattice<V>,
 			V extends LatticeElement<V>
 			> 
 			implements Evaluable<V>
@@ -31,20 +28,18 @@ public class CompoundConstraint
 	 */
 	private List<Evaluable<V>> constraints;
 	
-	/**
-	 * The Complete Lattice over the values of the instance
-	 */
-	private L lattice;
 //Constructors
+	
+	public CompoundConstraint(){
+		this.constraints = new ArrayList<Evaluable<V>>(); 
+	}
 	
 	/**
 	 * Constructs a CompoundConstraint that evaluates to the joined value of the given constraints
-	 * @param lattice
 	 * @param constraints
 	 */
-	public CompoundConstraint(L lattice,Evaluable<V>...constraints){
-		this.lattice = lattice;
-		this.constraints = new ArrayList<Evaluable<V>>();
+	public CompoundConstraint(Evaluable<V>...constraints){
+		this();
 		
 		for(Evaluable<V> c: constraints){
 			this.constraints.add(c);
@@ -55,11 +50,28 @@ public class CompoundConstraint
 	
 	@Override
 	public V value() {
-		V result = lattice.getBottom();
-		for(Evaluable<V> c: constraints){
-			result = lattice.join(result, c);
+		if(constraints.isEmpty()){
+			throw new IllegalStateException("No constraints");
 		}
+		Iterator<Evaluable<V>> values = constraints.iterator();
+		V result = values.next().value();
+		
+		while(values.hasNext()){
+			result = result.join(values.next());
+		}
+		
 		return result;
 	}
-
+	
+	/**
+	 * Add a constraint.
+	 * @param c
+	 */
+	public void addConstaint(Evaluable<V> c){
+		this.constraints.add(c);
+	}
+	
+	public List<Evaluable<V>> getConstraints(){
+		return Collections.unmodifiableList(constraints);
+	}
 }

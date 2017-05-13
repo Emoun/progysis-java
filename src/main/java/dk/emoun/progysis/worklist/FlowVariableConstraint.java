@@ -8,14 +8,11 @@ import dk.emoun.progysis.lattices.LatticeElement;
 
 /**
  * A constraint who's value depends on what a specific flow variable evaluates to.
- * @param <L>
- * The Complete Lattice type the constraint evaluates to elements of.
  * @param <V>
  * The type of the lattice elements the constraint evaluates to.
  */
 public class FlowVariableConstraint
 		<
-		L extends CompleteLattice<V>,
 		V extends LatticeElement<V>
 		> 
 		implements Evaluable<V>{
@@ -25,7 +22,7 @@ public class FlowVariableConstraint
 	/**
 	 * The constraint system which houses the flow variable this constraint is dependent on.
 	 */
-	private ConstraintSystem<L,V> parent;
+	private ConstraintSystem<V> parent;
 	
 	/**
 	 * The number reference of the flow variable the constraint is dependent on.
@@ -50,7 +47,7 @@ public class FlowVariableConstraint
 	 * A function calculating the value of the constraint, given the value of the flow variable
 	 * it is dependent on.
 	 */
-	public FlowVariableConstraint(ConstraintSystem<L,V> parent, int influncedBy, Function<V,V> constraintCalculator) {
+	public FlowVariableConstraint(ConstraintSystem<V> parent, int influncedBy, Function<V,V> constraintCalculator) {
 		this.constraintCalculator = constraintCalculator;
 		this.influencedBy = influncedBy;
 		this.parent = parent;

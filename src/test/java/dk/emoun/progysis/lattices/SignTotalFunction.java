@@ -7,7 +7,6 @@ public class SignTotalFunction extends TotalFunction<SignTotalFunction, String, 
 //Constructors
 	protected SignTotalFunction(Map<String, SignPowerSet> mapping, SignPowerSet lattice) {
 		super(mapping, lattice);
-		(new SignPowerSet());
 	}
 	
 

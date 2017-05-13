@@ -85,7 +85,7 @@ public abstract class TotalFunction
 	 * <br>
 	 * Simply, an implementation could be:<br>
 	 * protected R constructTotalFunction(Map<K,V> mapping){<br>
-	 * return new R(mapping);<br>
+	 * return new R(mapping, V);<br>
 	 * }<br>
 	 * 
 	 * @param mapping
