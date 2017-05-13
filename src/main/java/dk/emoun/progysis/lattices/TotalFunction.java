@@ -8,35 +8,32 @@ import java.util.Set;
 
 
 /**
- * Represents a Total Function of the key elements K, Complete Lattice L, and lattice elements V.<br>
+ * Represents a Total Function of the key elements K, and lattice elements V.<br>
  * Each instance of a {@link TotalFunction} can only map a specific set of keys. 
  * If two instances of TotalFunction of the same class map to different sets of keys, 
  * they will always be incomparable. 
- * Additionally, the methods {@link #getBottom()} and {@link #getTop()}
- * return instances that map the same keys (no more or less) 
- * than the instance that the method was invoked on. These top and bottom instance will
- * also be incomparable to any instance that maps a different key set.<br>
- * <br>
+ * Additionally, the methods{@link #getBottom()} 
+ * returns an instance that maps the same keys (no more or less) 
+ * than the instance that the method was invoked on.  * <br>
  * 
  * @param <R>
  * The type of the {@link TotalFunction Total Function} extender(IE R should be the exact same type as the extending class)
  * @param <K>
  * The key type of the Total Function. 
- * I.E. The K in the Total Function definition: (K->L, <=)
+ * I.E. The K in the Total Function definition: (K->V, <=)
  * @param <L>
  * The type of the Complete Lattice the total function space maps to. 
- * I.E. The L in the Total Function definition: (K->L, <=)
+ * I.E. The L in the Total Function definition: (K->V, <=)
  * @param <V>
- * The value type of the Complete Lattice L's elements.
+ * The lattice element type the total function maps to.
  */
 public abstract class TotalFunction
 	<
-		R extends TotalFunction<R,K,L,V>,
+		R extends TotalFunction<R,K,V>,
 		K,
-		L extends CompleteLattice<V>,
 		V extends LatticeElement<V>
 	> 
-	implements CompleteLattice<R>, LatticeElement<R> 
+	extends LatticeElement<R> 
 {
 	
 //Fields	
@@ -50,7 +47,7 @@ public abstract class TotalFunction
 	/**
 	 * The instance of a Complete Lattice the Total Function maps to.
 	 */
-	private L lattice;
+	private CompleteLattice<V> lattice;
 //Constructors
 	/**
 	 * Constructs a Total Function over the given lattice, mapping the given keys.
@@ -62,7 +59,7 @@ public abstract class TotalFunction
 	 * All keys evaluate to 'lattice.getBottom()' when the constructor terminates.<br>
 	 * 
 	 */
-	public TotalFunction(L lattice, K... keys){
+	public TotalFunction(V lattice, K... keys){
 		this(new HashMap<K,V>(), lattice);
 		for(K key: keys){
 			this.mapping.put(key, lattice.getBottom());
@@ -76,7 +73,7 @@ public abstract class TotalFunction
 	 * @param lattice
 	 * The Complete Lattice the resulting TotalFunction maps to.
 	 */
-	protected TotalFunction(Map<K,V> mapping, L lattice){
+	protected TotalFunction(Map<K,V> mapping, V lattice){
 		this.mapping = mapping;
 		this.lattice = lattice;
 	}
@@ -164,7 +161,7 @@ public abstract class TotalFunction
 	 * @return
 	 * The instance of a Complete Lattice the Total Function instance maps to
 	 */
-	public L getLattice(){
+	public CompleteLattice<V> getLattice(){
 		return this.lattice;
 	}
 	
@@ -176,38 +173,35 @@ public abstract class TotalFunction
 	}
 	
 	@Override
-	public boolean isBottom(Evaluable<R> r) {
-		return allValuesMapTo(r, lattice.getBottom());
+	public boolean isBottom() {
+		return allValuesMapTo(lattice.getBottom());
 	}
 
 	@Override
-	public boolean compare(Evaluable<R> e1, Evaluable<R> e2){
+	public boolean compare(Evaluable<R> other){
 		
-		TotalFunction<R,K,L,V> e1TF = (TotalFunction) (e1.value());
-		TotalFunction<R,K,L,V> e2TF = (TotalFunction) (e2.value());
+		TotalFunction<R,K,V> o = (TotalFunction) (other.value());
 		
-		if( !mapsKeysOf(e1TF, e2TF) || 
-			!mapsKeysOf(e2TF, e1TF))
+		if( !mapsKeysOf(this, o) || 
+			!mapsKeysOf(o, this))
 		{
 			return false;
 		}
 		
-		if(isBottom(e1))
+		if(isBottom())
 		{
 			return true;
 		}
 		
-		if(isBottom(e2))
+		if(other.value().isBottom())
 		{
-			//e1 is not bot
 			return false;
 		}
 		
 		//At this point neither is bottom and they map the same keys
-		for(K key: e1TF.mapping.keySet()){
-			if(!lattice.compare(
-					e1TF.getValue(key), 
-					e2TF.getValue(key)
+		for(K key: mapping.keySet()){
+			if(!this.getValue(key).compare(
+					o.getValue(key)
 					))
 			{
 				return false;
@@ -217,22 +211,21 @@ public abstract class TotalFunction
 	}
 
 	@Override
-	public R join(Evaluable<R> e1, Evaluable<R> e2) {
-		TotalFunction<R,K,L,V> e1TF = (TotalFunction) (e1.value());
-		TotalFunction<R,K,L,V> e2TF = (TotalFunction) (e2.value());
+	public R join(Evaluable<R> other) {
+		TotalFunction<R,K,V> e2TF = (TotalFunction) (other.value());
 		
 		HashMap<K,V> newMapping = new HashMap<K,V>();
 		
 		//Get all keys from both functions
-		Set<K> allKeys = joinKeySets(e1TF, e2TF);
+		Set<K> allKeys = joinKeySets(this, e2TF);
 		
 		//Join the two values for each key and put it in the new map
 		V v1, v2;
 		for(K key: allKeys){
-			v1 = getValueOrBottom(e1TF, key);
+			v1 = getValueOrBottom(this, key);
 			v2 = getValueOrBottom(e2TF, key);
 			
-			newMapping.put(key, lattice.join(v1, v2));
+			newMapping.put(key, v1.join(v2));
 		}
 		
 		return constructTotalFunction(newMapping);
@@ -244,16 +237,15 @@ public abstract class TotalFunction
 	};
 
 	@Override
-	public String stringRepresentation(Evaluable<R> r){
-		TotalFunction<R, K, L, V> tF = (TotalFunction<R,K,L,V>)(r.value());
+	public String stringRepresentation(){
 		StringBuilder b = new StringBuilder();
 		
 		b.append('{');
-		for(Entry<K,V> e: tF.mapping.entrySet()){
+		for(Entry<K,V> e: mapping.entrySet()){
 			b.append('{');
 			b.append(e.getKey().toString());
 			b.append('=');
-			b.append(tF.lattice.stringRepresentation(e.getValue()));
+			b.append(e.getValue().stringRepresentation());
 			b.append('}');
 		}
 		b.append('}');
@@ -270,7 +262,7 @@ public abstract class TotalFunction
 	 * @param key
 	 * @return
 	 */
-	private V getValueOrBottom(TotalFunction<R, K, L, V> e, K key) {
+	private V getValueOrBottom(TotalFunction<R, K, V> e, K key) {
 		try{
 			return e.getValue(key);
 		}catch(UnmappedKeyException err){
@@ -285,7 +277,7 @@ public abstract class TotalFunction
 	 * @param e2T
 	 * @return
 	 */
-	private Set<K> joinKeySets(TotalFunction<R, K, L, V> e1T, TotalFunction<R, K, L, V> e2T) {
+	private Set<K> joinKeySets(TotalFunction<R, K, V> e1T, TotalFunction<R, K, V> e2T) {
 		Set<K> allKeys = new HashSet<K>();
 		allKeys.addAll(e1T.mapping.keySet());
 		allKeys.addAll(e2T.mapping.keySet());
@@ -300,7 +292,7 @@ public abstract class TotalFunction
 	 * @return
 	 * whether {@code maps} maps all of the keys {@code keys'} maps. 
 	 */
-	private boolean mapsKeysOf(TotalFunction<R, K, L, V> maps, TotalFunction<R, K, L, V> keys){
+	private boolean mapsKeysOf(TotalFunction<R, K, V> maps, TotalFunction<R, K, V> keys){
 		for(K key: keys.mapping.keySet()){
 			if(!maps.mapping.containsKey(key)){
 				return false;
@@ -345,10 +337,10 @@ public abstract class TotalFunction
 	 * @param e
 	 * @return
 	 */
-	private boolean allValuesMapTo(Evaluable<R> r, V e){
-		TotalFunction<R,K,L,V> keyMappings = (TotalFunction)(r.value());
-		for(Entry<K,V> mapping: keyMappings.mapping.entrySet()){
-			if(!LatticeUtilities.equal(mapping.getValue(), e, lattice)){
+	private boolean allValuesMapTo(Evaluable<V> e){
+		
+		for(Entry<K,V> mapping: mapping.entrySet()){
+			if(!LatticeUtilities.equal(mapping.getValue(), e)){
 				return false;
 			}
 		}
