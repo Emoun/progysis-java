@@ -46,7 +46,7 @@ public class LatticeUtilities {
 	 * @return
 	 * {@code true}if the two functions are equal, otherwise {@code false}.
 	 */
-	public static  <R extends TotalFunction<R,?,?,?>>
+	public static  <R extends TotalFunction<R,?,?>>
 	boolean equal(R r1,R r2) 
 	{
 		return 	equal(r1, r2);

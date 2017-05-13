@@ -56,13 +56,13 @@ public abstract class TotalFunction
 	 * @param keys
 	 * Specific key values the TotalFunction is to map. <br>
 	 * Duplicate keys are only mapped once by the resulting TotalFunction.<br>
-	 * All keys evaluate to 'lattice.getBottom()' when the constructor terminates.<br>
+	 * All keys evaluate to 'lattice' when the constructor terminates.<br>
 	 * 
 	 */
 	public TotalFunction(V lattice, K... keys){
 		this(new HashMap<K,V>(), lattice);
 		for(K key: keys){
-			this.mapping.put(key, lattice.getBottom());
+			this.mapping.put(key, lattice);
 		}
 	}
 	
@@ -82,11 +82,10 @@ public abstract class TotalFunction
 	/**
 	 * Constructs a new Total Function with the given mapping to the same lattice as
 	 * the instance this method is invoked on.<br>
-	 * Use the super(mapping) constructor to achieve this.<br>
 	 * <br>
 	 * Simply, an implementation could be:<br>
 	 * protected R constructTotalFunction(Map<K,V> mapping){<br>
-	 * return super(mapping);<br>
+	 * return new R(mapping);<br>
 	 * }<br>
 	 * 
 	 * @param mapping
