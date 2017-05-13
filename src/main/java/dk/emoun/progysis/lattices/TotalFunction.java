@@ -9,23 +9,17 @@ import java.util.Set;
 
 /**
  * Represents a Total Function of the key elements K, and lattice elements V.<br>
- * Each instance of a {@link TotalFunction} can only map a specific set of keys. 
- * If two instances of TotalFunction of the same class map to different sets of keys, 
- * they will always be incomparable. 
- * Additionally, the methods{@link #getBottom()} 
- * returns an instance that maps the same keys (no more or less) 
- * than the instance that the method was invoked on.  * <br>
- * 
+ * Each instance of a {@link TotalFunction} tracks a set of (changeble) keys.
+ * If a key used that is not tracked, a default lattice element is used as the mapping for that key.
+ *  * 
  * @param <R>
  * The type of the {@link TotalFunction Total Function} extender(IE R should be the exact same type as the extending class)
  * @param <K>
  * The key type of the Total Function. 
  * I.E. The K in the Total Function definition: (K->V, <=)
- * @param <L>
- * The type of the Complete Lattice the total function space maps to. 
- * I.E. The L in the Total Function definition: (K->V, <=)
  * @param <V>
  * The lattice element type the total function maps to.
+ * I.E. The V in the Total Function definition: (K->V, <=)
  */
 public abstract class TotalFunction
 	<
@@ -45,18 +39,18 @@ public abstract class TotalFunction
 	private Map<K,V> mapping;
 	
 	/**
-	 * The instance of a Complete Lattice the Total Function maps to.
+	 * The default element for the total function.
 	 */
-	private CompleteLattice<V> lattice;
+	private V lattice;
 //Constructors
 	/**
 	 * Constructs a Total Function over the given lattice, mapping the given keys.
 	 * @param lattice
-	 * The Complete Lattice the resulting TotalFunction maps to.
+	 * The lattice element the resulting TotalFunction defaults to.
 	 * @param keys
 	 * Specific key values the TotalFunction is to map. <br>
 	 * Duplicate keys are only mapped once by the resulting TotalFunction.<br>
-	 * All keys evaluate to 'lattice' when the constructor terminates.<br>
+	 * All keys evaluate to the given element when the constructor returns.<br>
 	 * 
 	 */
 	public TotalFunction(V lattice, K... keys){
@@ -67,11 +61,11 @@ public abstract class TotalFunction
 	}
 	
 	/**
-	 * Constructs a Total Function over the given lattice, with the given mapping.
+	 * Constructs a Total Function with the given mapping and default element.
 	 * @param mapping
 	 * Mapping from a key set to elements of the given lattice.
 	 * @param lattice
-	 * The Complete Lattice the resulting TotalFunction maps to.
+	 * The default element of the total function.
 	 */
 	protected TotalFunction(Map<K,V> mapping, V lattice){
 		this.mapping = mapping;
@@ -80,7 +74,7 @@ public abstract class TotalFunction
 	
 //Abstract methods
 	/**
-	 * Constructs a new Total Function with the given mapping to the same lattice as
+	 * Constructs a new Total Function with the given mapping to the same lattice elements as
 	 * the instance this method is invoked on.<br>
 	 * <br>
 	 * Simply, an implementation could be:<br>
@@ -91,10 +85,13 @@ public abstract class TotalFunction
 	 * @param mapping
 	 * The mapping of a key set to elements of the same lattice 
 	 * as the instance this method is invoked on.
+	 * 
+	 * @param defaultElement
+	 * Default lattice element of the resulting total function.
 	 * @return
 	 * The newly constructed instance.
 	 */
-	protected abstract R constructTotalFunction(Map<K,V> mapping);
+	protected abstract R constructTotalFunction(Map<K,V> mapping, V defaultElement);
 	
 	
 //Methods
@@ -105,42 +102,39 @@ public abstract class TotalFunction
 	 * The key mapping to evaluate.
 	 * @return
 	 * The element the given key maps to in the TotalFunction this method is invoked on.<br>
-	 * If the TotalFunction does not map that key, {@code null} is returned.
-	 * @throws UnmappedKeyException
-	 * if the Total Function instance does not map the given key.
+	 * If the TotalFunction does not map that key, the default lattice element is returned.
 	 */
-	public V getValue(K key) throws UnmappedKeyException{
+	public V getValue(K key){
 		V value = mapping.get(key);
-		if(value ==  null){ 
-			throw new UnmappedKeyException(key);	
-		}
-		return value; 
+		return (value ==  null)? lattice : value;
 	}
 	
 	/**
 	 * Returns a new Total Function instance where the given key mapping holds.<br>
 	 * If the instance does not already map the given key,
 	 * the resulting instance will map the given key in addition to
-	 * all the keys the invoking instance maps.
+	 * all the keys the invoking instance maps.<br>
+	 * The default element of the resulting total function is identical to 
+	 * the invoked instance's default.
 	 * @param key
 	 * The key value to map
 	 * @param e
-	 * Element of the lattice both the invoking and resulting instances map to.
+	 * lattice element to map to.
 	 * @return
-	 * a new Total Function that is identical to the invoking instance except that it (additionally?)
+	 * a new Total Function that is identical to the invoking instance except that it
 	 * maps the given key to the given lattice element.<br>
 	 */
 	public R getUpdateValue(K key, Evaluable<V> e){
 		HashMap<K,V> newMapping = new HashMap<K,V>();
 		newMapping.putAll(mapping);
 		newMapping.put(key, e.value());
-		return constructTotalFunction(newMapping);
+		return constructTotalFunction(newMapping, lattice);
 	}
 	
 	/**
-	 * Constructs a new Total Function instance that maps the given key to
-	 * the same lattice as the invoking instance.<br>
-	 * All the keys in the resulting instance map to the bottom value of the lattice.
+	 * Constructs a new Total Function instance that maps the given keys to
+	 * the bottom value of the lattice.<br>
+	 * The default lattice element of the resulting total function is also bottom.
 	 * @param keys
 	 * Key set the resulting instance maps. Duplicates are only mapped once.
 	 * @return
@@ -151,16 +145,16 @@ public abstract class TotalFunction
 		for(K key: keys){
 			mapping.put(key, lattice.getBottom());
 		}
-		return constructTotalFunction(mapping);
+		return constructTotalFunction(mapping, lattice.getBottom());
 	}
 	
 //Accessors
 	
 	/**
 	 * @return
-	 * The instance of a Complete Lattice the Total Function instance maps to
+	 * The default lattice element of the instance.
 	 */
-	public CompleteLattice<V> getLattice(){
+	public V getDefault(){
 		return this.lattice;
 	}
 	
@@ -227,16 +221,14 @@ public abstract class TotalFunction
 			newMapping.put(key, v1.join(v2));
 		}
 		
-		return constructTotalFunction(newMapping);
+		return constructTotalFunction(newMapping, lattice.join(e2TF.lattice));
 	}
-	
-	@Override
-	public R value(){
-		return (R)this;
-	};
 
 	@Override
 	public String stringRepresentation(){
+		if(mapping.isEmpty()){
+			return "{}";
+		}
 		StringBuilder b = new StringBuilder();
 		
 		b.append('{');
@@ -319,14 +311,15 @@ public abstract class TotalFunction
 	/**
 	 * Creates a new Total Function that maps the same keys
 	 * as the invoking instance, but where all keys map to
-	 * the given value.
+	 * the given value. The default of the resulting instance
+	 * is the same as the invoking instance.
 	 * @param e
 	 * Complete Lattice element to map all the keys to.
 	 * @return
 	 * The resulting Total Function instance
 	 */
 	private R copyThisToFunctionWhereAllKeysMapTo(V e) {
-		return constructTotalFunction(copyKeysWithValue(mapping, e));
+		return constructTotalFunction(copyKeysWithValue(mapping, e), lattice);
 	}
 	
 	/**

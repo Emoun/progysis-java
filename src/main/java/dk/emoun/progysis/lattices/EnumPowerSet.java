@@ -2,6 +2,11 @@ package dk.emoun.progysis.lattices;
 
 import java.util.Set;
 
+/**
+ * A Powerset over the instances of an enum.
+ * @param <S>
+ * @param <E>
+ */
 public abstract class EnumPowerSet<S extends EnumPowerSet<S,E>, E extends Enum<E>> extends PowerSet<S, E>{
 
 	

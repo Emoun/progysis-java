@@ -22,18 +22,18 @@ public class LatticeUtilities {
 	}
 	
 	/**
-	 * Returns whether the two lattice elements are unordered in the Complete Lattice,
+	 * Returns whether the two lattice elements are incomparable in the Complete Lattice,
 	 * i.e. (element1 <= element2) == {@code false} and (element2 <= element1) == {@code false}.
 	 * @param element1
 	 * @param element2
 	 * @return
-	 * {@code true}if the two elements are unordered in the lattice, otherwise {@code false}.
+	 * {@code true}if the two elements are incomparable in the lattice, otherwise {@code false}.
 	 */
 	public static 
 		<
 		V extends LatticeElement<V>
 		> 
-	boolean unordered(Evaluable<V> element1, Evaluable<V> element2) 
+	boolean incomparable(Evaluable<V> element1, Evaluable<V> element2) 
 	{
 		return 	!element1.value().compare(element2) &&
 				!element2.value().compare(element1);

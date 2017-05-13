@@ -1,6 +1,5 @@
 package dk.emoun.progysis.worklist;
 
-import dk.emoun.progysis.lattices.CompleteLattice;
 import dk.emoun.progysis.lattices.LatticeElement;
 import dk.emoun.progysis.lattices.LatticeUtilities;
 

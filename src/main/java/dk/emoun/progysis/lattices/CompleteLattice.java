@@ -3,8 +3,6 @@ package dk.emoun.progysis.lattices;
 /**
  * Represents a complete lattice over lattice elements V.<br>
  * The interface specifies a set of method related to all Complete Lattices.<br>
- * Implementations of the methods of this interface should not change the internal state 
- * of the lattice instance.<br>
  * <br>
  * 
  * @param <V>
@@ -15,7 +13,6 @@ public interface CompleteLattice<V extends LatticeElement<V>> {
 //methods
 	
 	/**
-	 * 
 	 * @return
 	 * the bottom element (the least element) of the complete lattice.<br>
 	 */
@@ -24,7 +21,7 @@ public interface CompleteLattice<V extends LatticeElement<V>> {
 	/**
 	 * Returns whether the lattice element is the bottom element of the lattice.
 	 * @return
-	 * Whether the lattice element is the top element
+	 * Whether the element is the bottom element
 	 */
 	public boolean isBottom();
 	
@@ -35,7 +32,7 @@ public interface CompleteLattice<V extends LatticeElement<V>> {
 	 * @param other
 	 * Element of the lattice
 	 * @return
-	 * Whether this <= other
+	 * Whether {@code this} <= {@code other}
 	 */
 	public abstract boolean compare(Evaluable<V> other);
 		
@@ -43,11 +40,10 @@ public interface CompleteLattice<V extends LatticeElement<V>> {
 	 * Joins the current instance with the given elements returning the most precise (least fixed point) element
 	 * in the lattice larger than both:<br>
 	 * <br>
-	 * e1.compare(e1.join(e2)) == true && 
-	 * e2.compare(e2.join(e1)) == true<br>
+	 * Given j = e1.join(e2) then 
+	 * e1.compare(j) == true && 
+	 * e2.compare(j) == true<br>
 	 * <br>
-	 * The returned instance must be new and independent element of the lattice.<br>
-	 * Additionally, should not alter the given elements.
 	 * @param other
 	 * Element of the lattice
 	 * @return
